@@ -1,0 +1,56 @@
+The Premiere Products Database’s purpose is to ensure the company’s data is current and more accurate than in the present manual systems.
+The database will offer speed and efficiency to managers looking to obtain answers to their questions in a user-friendly environment. 
+It will enable the production of a variety of useful reports in addition to maintaining tables pertaining to frequently used and necessary
+information that would be of interest to the overall process of the company. The database ensures the information will remain accessible,
+in order to produce helpful queries from the data.  Examples of tables include are as follows: customers, orders, parts, representatives,
+and order lines.  Each table will store information accordingly while remaining versatile for the user. 
+
+
+
+
+Data Dictionary
+
+Key:
+TABLE NAME
+	ATTRIBUTE		DATA TYPE
+
+REP
+REP_NUM	int(3)
+LAST_NAME	text
+FIRST_NAME	text
+STREET	text
+CITY	text
+STATE	text
+ZIP	int(5)
+COMMISSION	decimal(15,2)
+RATE	decimal(4,2)
+
+CUSTOMER
+CUSTOMER_NUM	int(4)
+CUSTOMER_NAME	text
+STREET	text
+CITY	text
+STATE	text
+ZIP	int(5)
+BALANCE	decimal(10,2)
+CREDIT_LIMIT	decimal(10,2)
+REP_NUM	int(3)
+
+ORDERS
+ORDER_NUM	int(6)
+ORDER_DATE	date
+CUSTOMER_NUM	int(4)
+
+ORDER_LINE
+ORDER_NUM	int(6)
+PART_NUM	varchar(5)
+NUM_ORDERED	int(3)
+QUOTED_PRICE	decimal(15,2)
+
+PART
+PART_NUM	varchar(5)
+DESCRIPTION	text
+ON_HAND	int(3)
+CLASS	text
+WAREHOUSE	int(1)
+PRICE	decimal(10,2)
