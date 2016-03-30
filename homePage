@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products</title>
+<link rel="stylesheet" type="text/css" href="proj.css">
+
+</head>
+
+
+<body>
+
+<div id="photos"> 
+	<img src="pictures/background.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+<ul>
+  <li><a class="active" href="p1">Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a href="p1part.html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <!-- <li style="float:right"><a href="#about">About</a></li> -->
+</ul>
+
+
+ <center><IMG SRC="pictures/home.jpg" ALT="homePic" WIDTH=600 HEIGHT=300></br>
+<br/> <br/>
+
+<table align="center" style="width:70%">
+
+	<tr>
+
+    <td>
+       <a href="p1rep.html" class="rep">Sales Representative Page</a>
+    </td>
+
+    <td>
+       <a href="p1customer.html" class="customer">Customer Page</a>
+    </td>
+
+    <td>
+      <a href="p1order.html" class="order">Order Page</a>
+    </td>
+
+    <td>
+      <a href="p1part.html" class="part">Part Page</a>
+    </td>
+
+    <td>
+      <a href="p1orderLine.html" class="orderLine">Order Line Page</a>
+    </td>
+
+</table>
+ 
+
+</body>
+</html>
+
