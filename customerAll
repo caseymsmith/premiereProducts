@@ -1,0 +1,105 @@
+//This page enables you to view all information in the customer table 
+
+<html> 
+<head> 
+<title> Customer - All Info. </title>
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+
+
+<body align="center" style="font-family:verdana">
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a class="active" href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a href="p1part.html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <li style="float:right"><a href="#about">About</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='10'>  All Customer Information</font>
+
+<br/>
+<HR WIDTH="60%" NOSHADE><br/>
+
+
+<?php
+
+//Attempt to connect
+require_once('connectAlways.php'); 
+
+$query = "SELECT * FROM CUSTOMER";
+
+// output the resulting query table
+print'<table align="center" cellspacing="8">';
+print '<tr>'; 
+print '<td><b>Customer No.</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Customer Name</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Street</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>City</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>State</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Zip Code</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Balance</b></td>';
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Rep No.</b></td>';
+print '<td align="center"><b>Credit Limit</b></td>';
+print '</tr>'; 
+if ($r = mysql_query($query))
+{
+	while ($row = mysql_fetch_array($r))
+	{
+		echo "<tr>";
+			echo '<td><center>'.$row['CUSTOMER_NUM'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td>'.$row['CUSTOMER_NAME'].'</td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['STREET'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['CITY'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['STATE'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['ZIP'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['BALANCE'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['REP_NUM'].'</center></td>';
+			echo '<td align="right">'.$row['CREDIT_LIMIT'].'</td>';
+		echo "</tr>";
+		}
+		print '</table>';
+}
+
+
+?>
+
+
+
+<br/>
+<br/>
+
+
+<center> <a href="p1customer.html" class="custReturn">Return to the Customer Page</a> </center>
+
+
+</body>
+</html>
+
+
