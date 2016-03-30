@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products - Customer Page</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+
+<body>
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a class="active" href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a href="p1part.html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <!-- <li style="float:right"><a href="#about">About</a></li> -->
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Customer Page</font>
+
+<br/><br/>
+
+<center><IMG SRC="pictures/customerspic.jpg" ALT="custpic" WIDTH=600 HEIGHT=300></center>
+
+
+<table align="center">
+
+	<td> 
+       <a href="p1connect.php" class="custList">View All Customer Info</a>
+    </td>
+
+    <td>
+    	<a href="p1newCust.php" class="newCust">Add New Customer</a>
+    </td>
+
+     <td>
+      <a href="p1deleteCust.php" class="deleteCust">Delete a Customer</a>
+    </td>
+
+    <td>
+     <a href="p1editCust.php" class="editCust">Edit a Customer</a>
+   </td> 
+   
+    <td>
+      <a href="p1queryCust.php" class="queryCust">Query a Customer</a>
+    </td>
+
+</table>
+
+</body>
+</html>
+
