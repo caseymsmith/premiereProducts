@@ -1,0 +1,173 @@
+<?php
+//attempt to connect
+require_once('connectAlways.php');
+
+//allows user to create new entry in the customer database
+function renderForm($onum, $date, $cnum, $error)
+{
+	//CAPTURE is a heredoc, which is created by doing <<<HEREDOCNAME
+	//to end it, just put HEREDOCNAME at the beginning of a line
+	if(isset($error) && $error !== NULL) {
+
+		$error = <<<ERROR
+		<div style="padding:4px; border:1px solid red; color:red;">$error</div>
+ERROR;
+	} 
+
+	else {
+		$error = '';
+	}
+	//<input type=hidden value="1" name="check" /> is dummie variable to check is there a submission/stuff in required fields
+$form = <<<CAPTURE
+$error
+<br/>
+
+	<div style="float:right;"><IMG SRC="pictures/newO.jpg" ALT="newOPic" WIDTH=500 HEIGHT=250></div>
+
+
+<form id="orderform" method="post">
+	<div> 
+		<input type=hidden value="1" name="check" />
+		<font face="verdana">
+		Please input the required criteria: <br/><br/>
+		Order Number:<input type="text" name="onum" value="$onum" required/><br/>
+		Order Date:<input type="text" name="date" value="$date" required/><br/>
+		Customer Number:<input type="text" name="cnum" value="$cnum" required/><br/><br/>
+		(enter the date in the format of year, month, day with dashes:<br/>
+		 March 28th, 2015 would be 2015-03-28)<br/><br/>
+		</font>
+	</br></br>
+	<button type="button" onclick="resetForm()" id="clearentries" class="submitButton" style="border:none">Clear Entries</button>
+	<button type="submit" form="orderform" class="submitButton" style="border:none">Submit</button>
+	</div>
+</form>
+	<script>
+		function resetForm() {
+			document.getElementById("orderform").reset();
+		}
+	</script>
+
+<br/><br/>
+
+<table align="center"> 
+	<td>
+		<a href="p1order.html" class="custReturn">Return to the Orders Page</a> 
+	</td>
+	<td>
+		<a href="p1.html" class="homeReturn">Return to Home Page</a> 
+	</td>
+	</table>
+CAPTURE;
+
+	return $form;
+} ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products - Add New Order </title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+<body>
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a class="active" href="p1order.html">Order</a></li>
+  <li><a href="p1part.html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <li style="float:right"><a href="#about">About</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Add a New Order </font>
+
+<br/><br/>
+
+<?php
+
+//get form data, making sure it's valid
+if(isset($_POST['check'])){
+$onum=mysql_real_escape_string(htmlspecialchars($_POST['onum']));
+$date=mysql_real_escape_string(htmlspecialchars($_POST['date']));
+$cnum=mysql_real_escape_string(htmlspecialchars($_POST['cnum']));
+
+//verifies fields have entries
+if($onum=='' || $date=='' || $cnum=='')
+{
+//generate error message
+$error='ERROR: Please fill in all required fields!';
+//if any field is blank, form is redisplayed. 
+echo renderForm($onum, $date, $cnum, $error);
+}
+
+////////////////////////////////////////////////////////////////////////
+//Verifies that there is no user error and entries are correct format.// 
+////////////////////////////////////////////////////////////////////////
+else if(!is_numeric($onum)){
+//generate error message
+$error='ERROR: The order number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+echo renderForm($onum, $date, $cnum, $error);
+}
+else if($onum < 0){
+//generate error message
+$error='ERROR: The order number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+echo renderForm($onum, $date, $cnum, $error);
+}
+// else if(!is_numeric($date)){
+// //generate error message
+// $error='ERROR: The date you entered was invalid. Please check the format and enter a valid date!';
+// //redisplay the form
+// echo renderForm($onum, $date, $cnum, $error);
+// }
+else if(!is_numeric($cnum)){
+//generate error message
+$error='ERROR: The customer number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+echo renderForm($onum, $date, $cnum, $error);
+}
+else if($cnum<0){
+//generate error message
+$error='ERROR: The customer number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+echo renderForm($onum, $date, $cnum, $error);
+}
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+ else {
+	//save data to the database
+
+	mysql_query("INSERT ORDERS SET ORDER_NUM='$onum', ORDER_DATE='$date', CUSTOMER_NUM='$cnum'")
+	or die (mysql_error());
+	header('Location:updateOrder.php');
+}
+
+
+}
+
+
+else{
+	//if the form hasn't been submitted, display the form
+echo renderForm('', '', '', NULL);
+}
+
+
+?>
+</body>
+</html>
