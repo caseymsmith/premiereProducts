@@ -1,0 +1,96 @@
+//This page enables you to view all information in the parts table
+
+<html> 
+<head> 
+<title> Parts - All Info. </title>
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+
+
+<body align="center" style="font-family:verdana">
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a class="active" href="p1part.html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <li style="float:right"><a href="#about">About</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='10'>  All Parts Information</font>
+
+<br/>
+<HR WIDTH="60%" NOSHADE><br/>
+
+
+<?php
+
+//Attempt to connect
+require_once('connectAlways.php'); 
+
+$query = "SELECT * FROM PART";
+
+
+// output the resulting query table
+print'<table align="center" cellspacing="8">';
+print '<tr>'; 
+print '<td><b>Part No.</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Description</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>On Hand</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Class</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Warehouse</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Price</b></td>'; 
+print '</tr>'; 
+if ($r = mysql_query($query))
+{
+	while ($row = mysql_fetch_array($r))
+	{
+		echo "<tr>";
+			echo '<td><center>'.$row['PART_NUM'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td>'.$row['DESCRIPTION'].'</td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['ON_HAND'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['CLASS'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['WAREHOUSE'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['PRICE'].'</center></td>';
+		echo "</tr>";
+		}
+		print '</table>';
+}
+
+
+?>
+
+
+
+<br/>
+<br/>
+
+
+<center> <a href="p1part.html" class="custReturn">Return to the Part Page</a> </center>
+
+
+</body>
+</html>
+
+
