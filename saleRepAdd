@@ -1,0 +1,243 @@
+<?php
+//attempt to connect
+require_once('connectAlways.php');
+
+//allows user to create new entry in the customer database
+function renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error)
+{
+	//CAPTURE is a heredoc, which is created by doing <<<HEREDOCNAME
+	//to end it, just put HEREDOCNAME at the beginning of a line
+	if(isset($error) && $error !== NULL) {
+
+		$error = <<<ERROR
+		<div style="padding:4px; border:1px solid red; color:red;">$error</div>
+ERROR;
+	} 
+
+	else {
+		$error = '';
+	}
+	//<input type=hidden value="1" name="check" /> is dummie variable to check is there a submission/stuff in required fields
+$form = <<<CAPTURE
+$error
+<br/>
+
+	<div style="float:right;"><IMG SRC="pictures/newrep.jpg" ALT="newRepPic" WIDTH=600 HEIGHT=250></div>
+
+
+<form id="repform" method="post">
+	<div> 
+		<input type=hidden value="1" name="check" />
+		<font face="verdana">
+		Please input the required criteria: <br/><br/>
+		Representative Number:<input type="text" name="repNum" value="$repNum" required/><br/>
+		Last Name:<input size="44" type="text" name="last" value="$last" required/><br/>
+		First Name:<input size="44" type="text" name="first" value="$first" required/><br/>
+		Street:<input size="55" type="text" name="street" required/></br> 
+		City:<input size="23" type="text" name="city" required/> 
+		State:<input size="5" type="text" name="state" required/> 
+		Zip Code:<input size="8" type="text" name="zip" required/><br/>
+		Commission:<input size="18" type="text" name="commission" required/>
+		Rate:<input size="19" type="text" name="rate" required/></br><br/>
+		</font>
+	</br></br>
+	<button type="button" onclick="resetForm()" id="clearentries" class="submitButton" style="border:none">Clear Entries</button>
+	<button type="submit" form="repform" class="submitButton" style="border:none">Submit</button>
+	</div>
+</form>
+	<script>
+		function resetForm() {
+			document.getElementById("repform").reset();
+		}
+	</script>
+
+<br/><br/>
+
+<table align="center"> 
+	<td>
+		<a href="p1rep.html" class="custReturn">Return to the Sales Representative Page</a> 
+	</td>
+	<td>
+		<a href="p1.html" class="homeReturn">Return to Home Page</a> 
+	</td>
+	</table>
+CAPTURE;
+
+	return $form;
+} ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products - Add New Representative </title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+<body>
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a class="active" href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a href="p1part,html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <li style="float:right"><a href="#about">About</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Add New Sales Representative </font>
+
+<br/><br/>
+
+<?php
+
+//get form data, making sure it's valid
+if(isset($_POST['check'])){
+$repNum=mysql_real_escape_string(htmlspecialchars($_POST['repNum']));
+$last=mysql_real_escape_string(htmlspecialchars($_POST['last']));
+$first=mysql_real_escape_string(htmlspecialchars($_POST['first']));
+$street=mysql_real_escape_string(htmlspecialchars($_POST['street']));
+$city=mysql_real_escape_string(htmlspecialchars($_POST['city']));
+$state=mysql_real_escape_string(htmlspecialchars($_POST['state']));
+$zip=mysql_real_escape_string(htmlspecialchars($_POST['zip']));
+$commission=mysql_real_escape_string(htmlspecialchars($_POST['commission']));
+$rate=mysql_real_escape_string(htmlspecialchars($_POST['rate']));
+
+//verifies fields have entries
+if($repNum=='' || $last=='' || $first=='' || $street=='' || $city=='' || $state=='' || $zip=='' || $commission=='' || $rate=='')
+{
+//generate error message
+$error='ERROR: Please fill in all required fields!';
+//if any field is blank, form is redisplayed. 
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+ } 
+
+////////////////////////////////////////////////////////////////////////
+//Verifies that there is no user error and entries are correct format.// 
+////////////////////////////////////////////////////////////////////////
+else if(!is_numeric($repNum)){
+//generate error message
+$error='ERROR: The representative number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(is_numeric($last)){
+//generate error message
+$error='ERROR: The representative last name you entered was invalid. Please enter a valid last name!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(is_numeric($first)){
+//generate error message
+$error='ERROR: The representative first name you entered was invalid. Please enter a valid first name!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(is_numeric($city)){
+//generate error message
+$error='ERROR: The city you entered was invalid. Please enter a valid city!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(strlen($state)>'2'){
+//generate error message
+$error='ERROR: The state letters you input is invalid! Please enter a 2 letter state abbreviation!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(strlen($state)<'2'){
+//generate error message
+$error='ERROR: The state letters you input is invalid! Please enter a 2 letter state abbreviation!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(is_numeric($state)){
+//generate error message
+$error='ERROR: The state letters you input is invalid! Please enter a 2 letter state abbreviation!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if($zip=='0'){
+//generate error message
+$error='ERROR: The zip code you entered was invalid. Please enter a valid 5-digit zip code number!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(!is_numeric($zip)){
+//generate error message
+$error='ERROR: The zip code you entered was invalid. Please enter a valid 5-digit zip code number!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(strlen($zip)>'5'){
+//generate error message
+$error='ERROR: The zip code you entered was invalid. Please enter a valid 5-digit zip code number!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(strlen($zip)<'5'){
+//generate error message
+$error='ERROR: The zip code you entered was invalid. Please enter a valid 5-digit zip code number!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(!is_numeric($commission)){
+//generate error message
+$error='ERROR: The commission value you entered was invalid. Please enter a valid commission number!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if($commission<'0'){
+//generate error message
+$error='ERROR: The commission value you entered was invalid. Please enter a valid commission number greater than zero!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(!is_numeric($rate)){
+//generate error message
+$error='ERROR: The rate value you entered was invalid. Please enter a valid rate number!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if($rate<'0'){
+//generate error message
+$error='ERROR: The rate value you entered was invalid. Please enter a valid rate number greater than zero!';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+ else {
+	//save data to the database
+
+	mysql_query("INSERT REP SET REP_NUM='$repNum', LAST_NAME='$last', FIRST_NAME='$first', STREET='$street', CITY='$city' , STATE='$state' , ZIP='$zip' , COMMISSION='$commission', RATE='$rate'")
+	or die (mysql_error());
+	header('Location:updateRep.php');
+}
+
+
+}
+
+
+else{
+	//if the form hasn't been submitted, display the form
+echo renderForm('', '', '', '', '', '', '', '', '', NULL);
+}
+
+
+?>
+</body>
+</html>
