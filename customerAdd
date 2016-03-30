@@ -1,0 +1,242 @@
+<?php
+//attempt to connect
+require_once('connectAlways.php');
+
+//allows user to create new entry in the customer database
+function renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error)
+{
+	//CAPTURE is a heredoc, which is created by doing <<<HEREDOCNAME
+	//to end it, just put HEREDOCNAME at the beginning of a line
+	if(isset($error) && $error !== NULL) {
+
+		$error = <<<ERROR
+		<div style="padding:4px; border:1px solid red; color:red;">$error</div>
+ERROR;
+	} 
+
+	else {
+		$error = '';
+	}
+	//<input type=hidden value="1" name="check" /> is dummie variable to check is there a submission/stuff in required fields
+$form = <<<CAPTURE
+$error
+<br/>
+
+	<div style="float:right;"><IMG SRC="pictures/newcust.jpg" ALT="newCustPic" WIDTH=800 HEIGHT=250></div>
+
+
+<form id="customerform" method="post">
+	<div> 
+		<input type=hidden value="1" name="check" />
+		<font face="verdana">
+		Please input the required criteria: <br/><br/>
+		Customer Number:<input type="text" name="custNum" value="$custNum" required/><br/>
+		Customer Name:<input size="44" type="text" name="custName" value="$custName" required/><br/>
+		Street:<input size="55" type="text" name="street" required/></br> 
+		City:<input size="23" type="text" name="city" required/> 
+		State:<input size="5" type="text" name="state" required/> 
+		Zip Code:<input size="8" type="text" name="zip" required/><br/>
+		Balance:<input size="18" type="text" name="balance" required/>
+		Credit Limit:<input size="19" type="text" name="credLim" required/></br>
+		Representative Number:<input type="text" name="repNum" required/><br/>
+		</font>
+	</br></br>
+	<button type="button" onclick="resetForm()" id="clearentries" class="submitButton" style="border:none">Clear Entries</button>
+	<button type="submit" form="customerform" class="submitButton" style="border:none">Submit</button>
+	</div>
+</form>
+	<script>
+		function resetForm() {
+			document.getElementById("customerform").reset();
+		}
+	</script>
+
+<br/><br/>
+
+<table align="center"> 
+	<td>
+		<a href="p1customer.html" class="custReturn">Return to the Customer Page</a> 
+	</td>
+	<td>
+		<a href="p1.html" class="homeReturn">Return to Home Page</a> 
+	</td>
+	</table>
+CAPTURE;
+
+	return $form;
+} ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products - Add New Customer </title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+<body>
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a class="active" href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a href="p1part,html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <li style="float:right"><a href="#about">About</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Add New Customer </font>
+
+<br/><br/>
+
+<?php
+
+//get form data, making sure it's valid
+if(isset($_POST['check'])){
+$custNum=mysql_real_escape_string(htmlspecialchars($_POST['custNum']));
+$custName=mysql_real_escape_string(htmlspecialchars($_POST['custName']));
+$street=mysql_real_escape_string(htmlspecialchars($_POST['street']));
+$city=mysql_real_escape_string(htmlspecialchars($_POST['city']));
+$state=mysql_real_escape_string(htmlspecialchars($_POST['state']));
+$zip=mysql_real_escape_string(htmlspecialchars($_POST['zip']));
+$balance=mysql_real_escape_string(htmlspecialchars($_POST['balance']));
+$credLim=mysql_real_escape_string(htmlspecialchars($_POST['credLim']));
+$repNum=mysql_real_escape_string(htmlspecialchars($_POST['repNum']));
+
+//verifies fields have entries
+if($custNum=='' || $custName=='' || $street=='' || $city=='' || $state=='' || $zip==''
+	|| $balance=='' || $credLim=='' || $repNum=='')
+{
+//generate error message
+$error='ERROR: Please fill in all required fields!';
+//if any field is blank, form is redisplayed. 
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+ } 
+
+////////////////////////////////////////////////////////////////////////
+//Verifies that there is no user error and entries are correct format.// 
+////////////////////////////////////////////////////////////////////////
+else if(!is_numeric($zip)){
+//generate error message
+$error='ERROR: The zip code you entered was invalid. Please enter a valid 5-digit zip code number!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+else if(strlen($zip)>'5'){
+//generate error message
+$error='ERROR: The zip code you entered was invalid. Please enter a valid 5-digit zip code number!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+else if(strlen($zip)<'5'){
+//generate error message
+$error='ERROR: The zip code you entered was invalid. Please enter a valid 5-digit zip code number!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+else if($zip=='0'){
+//generate error message
+$error='ERROR: The zip code you entered was invalid. Please enter a valid 5-digit zip code number!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+else if(!is_numeric($balance)){
+//generate error message
+$error='ERROR: The balance you entered was invalid. Please enter a valid balance number!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+else if(is_numeric($custName)){
+//generate error message
+$error='ERROR: The customer name you entered was invalid. Please enter a valid customer name!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+// else if(!mysql_query($custNum)){
+// //generate error message
+// $error='ERROR: The customer number you input is already in the list of customers! <br/>
+//  Please include a valid customer number.';
+// //redisplay the form
+// echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+// }
+else if(strlen($state)>'2'){
+//generate error message
+$error='ERROR: The state letters you input is invalid! Please enter a 2 letter state abbreviation!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+else if(strlen($state)<'2'){
+//generate error message
+$error='ERROR: The state letters you input is invalid! Please enter a 2 letter state abbreviation!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+else if(is_numeric($state)){
+//generate error message
+$error='ERROR: The state letters you input is invalid! Please enter a 2 letter state abbreviation!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+else if(!is_numeric($repNum)){
+//generate error message
+$error='ERROR: The representative number you entered was invalid. Please enter a valid representative number!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+else if($repNum<'0'){
+//generate error message
+$error='ERROR: The representative number you entered was invalid. Please enter a valid representative number!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+else if(!is_numeric($credLim)){
+//generate error message
+$error='ERROR: The credit limit value you entered was invalid. Please enter a valid credit limit number!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+else if($credLim<'0'){
+//generate error message
+$error='ERROR: The credit limit value you entered was invalid. Please enter a valid credit limit number!';
+//redisplay the form
+echo renderForm($custNum, $custName, $street, $city, $state, $zip, $balance, $credLim, $repNum, $error);
+}
+
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+ else {
+	//save data to the database
+
+	mysql_query("INSERT CUSTOMER SET CUSTOMER_NUM='$custNum', CUSTOMER_NAME='$custName',
+		STREET='$street', CITY='$city' , STATE='$state' , ZIP='$zip' , BALANCE='$balance', 
+		CREDIT_LIMIT='$credLim', REP_NUM='$repNum'")
+	or die (mysql_error());
+	header('Location:update.php');
+}
+
+
+}
+
+
+else{
+	//if the form hasn't been submitted, display the form
+echo renderForm('', '', '', '', '', '', '', '', '', NULL);
+}
+
+
+?>
+</body>
+</html>
