@@ -1,0 +1,208 @@
+<?php
+//attempt to connect
+require_once('connectAlways.php');
+
+//allows user to create new entry in the customer database
+function renderForm($pnum, $des, $hand, $class, $ware, $price, $error)
+{
+	//CAPTURE is a heredoc, which is created by doing <<<HEREDOCNAME
+	//to end it, just put HEREDOCNAME at the beginning of a line
+	if(isset($error) && $error !== NULL) {
+
+		$error = <<<ERROR
+		<div style="padding:4px; border:1px solid red; color:red;">$error</div>
+ERROR;
+	} 
+
+	else {
+		$error = '';
+	}
+	//<input type=hidden value="1" name="check" /> is dummie variable to check is there a submission/stuff in required fields
+$form = <<<CAPTURE
+$error
+<br/>
+
+	<div style="float:right;"><IMG SRC="pictures/newO.jpg" ALT="newOPic" WIDTH=500 HEIGHT=250></div>
+
+
+<form id="apform" method="post">
+	<div> 
+		<input type=hidden value="1" name="check" />
+		<font face="verdana">
+		Please input the required criteria: <br/><br/>
+		Part Number:<input type="text" name="pnum" value="$pnum" required/><br/>
+		Description:<input type="text" name="des" value="$des" required/><br/>
+		On Hand Amount:<input type="text" name="hand" value="$hand" required/><br/>
+		Class:<input type="text" name="class" value="$class" required/><br/>
+		Warehouse:<input type="text" name="ware" value="$ware" required/><br/>
+		Price:<input type="text" name="price" value="$price" required/><br/><br/>
+		</font>
+	</br></br>
+	<button type="button" onclick="resetForm()" id="clearentries" class="submitButton" style="border:none">Clear Entries</button>
+	<button type="submit" form="apform" class="submitButton" style="border:none">Submit</button>
+	</div>
+</form>
+	<script>
+		function resetForm() {
+			document.getElementById("apform").reset();
+		}
+	</script>
+
+<br/><br/>
+
+<table align="center"> 
+	<td>
+		<a href="p1part.html" class="custReturn">Return to the Part Page</a> 
+	</td>
+	<td>
+		<a href="p1.html" class="homeReturn">Return to Home Page</a> 
+	</td>
+	</table>
+CAPTURE;
+
+	return $form;
+} ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products - Add New Part </title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+<body>
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a class="active" href="p1part.html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <li style="float:right"><a href="#about">About</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Add a New Part</font>
+
+<br/><br/>
+
+<?php
+
+//get form data, making sure it's valid
+if(isset($_POST['check'])){
+$pnum=mysql_real_escape_string(htmlspecialchars($_POST['pnum']));
+$des=mysql_real_escape_string(htmlspecialchars($_POST['des']));
+$hand=mysql_real_escape_string(htmlspecialchars($_POST['hand']));
+$class=mysql_real_escape_string(htmlspecialchars($_POST['class']));
+$ware=mysql_real_escape_string(htmlspecialchars($_POST['ware']));
+$price=mysql_real_escape_string(htmlspecialchars($_POST['price']));
+
+//verifies fields have entries
+if($pnum=='' || $des=='' || $hand=='' || $class=='' || $ware=='' || $price=='' )
+{
+//generate error message
+$error='ERROR: Please fill in all required fields!';
+//if any field is blank, form is redisplayed. 
+echo renderForm($pnum, $des, $hand, $class, $ware, $price, $error);
+}
+
+////////////////////////////////////////////////////////////////////////
+//Verifies that there is no user error and entries are correct format.// 
+////////////////////////////////////////////////////////////////////////
+else if(strlen($pnum)!= 4){
+//generate error message
+$error='ERROR: The part number you entered was invalid. Please enter a valid 4-digit number (this can include letters, ex. "CC01" would be acceptable)!';
+//redisplay the form
+echo renderForm($pnum, $des, $hand, $class, $ware, $price, $error);
+}
+else if(is_numeric($des)){
+//generate error message
+$error='ERROR: The description you entered was invalid. Please enter valid description without numbers!';
+//redisplay the form
+echo renderForm($pnum, $des, $hand, $class, $ware, $price, $error);
+}
+else if(!is_numeric($hand)){
+//generate error message
+$error='ERROR: The on hand number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+echo renderForm($pnum, $des, $hand, $class, $ware, $price, $error);
+}
+else if($hand < 0){
+//generate error message
+$error='ERROR: The on hand number you entered was invalid. Please enter a valid number greater than 0!';
+//redisplay the form
+echo renderForm($pnum, $des, $hand, $class, $ware, $price, $error);
+}
+else if(strlen($class)!= 2){
+//generate error message
+$error='ERROR: The class you entered was invalid. Please enter a valid 2-letter class ( ex. "CS" would be acceptable)!';
+//redisplay the form
+echo renderForm($pnum, $des, $hand, $class, $ware, $price, $error);
+}
+else if(is_numeric($class)){
+//generate error message
+$error='ERROR: The class you entered was invalid. Please enter valid class letters!';
+//redisplay the form
+echo renderForm($pnum, $des, $hand, $class, $ware, $price, $error);
+}
+else if($ware<0){
+//generate error message
+$error='ERROR: The warehouse number you entered was invalid. Please enter a valid number greater than 0!';
+//redisplay the form
+echo renderForm($pnum, $des, $hand, $class, $ware, $price, $error);
+}
+else if(!is_numeric($ware)){
+//generate error message
+$error='ERROR: The warehouse number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+echo renderForm($pnum, $des, $hand, $class, $ware, $price, $error);
+}
+
+else if(!is_numeric($price)){
+//generate error message
+$error='ERROR: The quoted price you entered was invalid. Please enter a valid number!';
+//redisplay the form
+echo renderForm($pnum, $des, $hand, $class, $ware, $price, $error);
+}
+else if($price<0){
+//generate error message
+$error='ERROR: The quoted price you entered was invalid. Please enter a valid number greater than 0.00!';
+//redisplay the form
+echo renderForm($pnum, $des, $hand, $class, $ware, $price, $error);
+}
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+ else {
+	//save data to the database
+
+	mysql_query("INSERT PART SET PART_NUM='$pnum', DESCRIPTION='$des', ON_HAND='$hand', CLASS='$class', WAREHOUSE='$ware', PRICE='$price'")
+	or die (mysql_error());
+	header('Location:updatedPart.php');
+}
+
+
+}
+
+
+else{
+	//if the form hasn't been submitted, display the form
+echo renderForm('', '', '', '', '', '', NULL);
+}
+
+
+?>
+</body>
+</html>
