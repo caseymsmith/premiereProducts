@@ -1,0 +1,357 @@
+<?php
+//attempt to connect
+require_once('connectAlways.php');
+
+//allows user to create new entry in the customer database
+function renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error)
+{
+	//CAPTURE is a heredoc, which is created by doing <<<HEREDOCNAME
+	//to end it, just put HEREDOCNAME at the beginning of a line
+	if(isset($error) && $error !== NULL) {
+
+		$error = <<<ERROR
+		<div style="padding:4px; border:1px solid red; color:red;">$error</div>
+ERROR;
+	} 
+
+	else {
+		$error = '';
+	}
+	//<input type=hidden value="1" name="check" /> is dummie variable to check is there a submission/stuff in required fields
+$form = <<<CAPTURE
+$error
+<center>
+
+<form id="repeditform" method="post">
+	<div> 
+		<input type=hidden value="1" name="check" />
+		<font face="verdana">
+
+
+<HR WIDTH="60%" NOSHADE><br/><br/>
+
+		Please input the required criteria in addition to the modifications: <br/>
+		(* = REQUIRED)<br/><br/>
+
+		* Representative Number:<input type="text" name="repNum" value="$repNum" required/><br/>
+		Last Name:<input size="44" type="text" name="last" value="$last"/><br/>
+		First Name:<input size="44" type="text" name="first" value="$first" /><br/>
+		Street:<input size="55" type="text" name="street" /></br> 
+		City:<input size="23" type="text" name="city" /> 
+		State:<input size="5" type="text" name="state" /> 
+		Zip Code:<input size="8" type="text" name="zip" /><br/>
+		Commission:<input size="18" type="text" name="commission" />
+		Rate:<input size="19" type="text" name="rate" /></br><br/>
+		
+	</br>
+
+	(modifications will appear in the chart once you click submit)
+	</br><br/></font>
+
+	<button type="button" onclick="resetForm()" id="clearentries" class="submitButton" style="border:none">Clear Entries</button>
+	<button type="submit" form="repeditform" class="submitButton" style="border:none">Submit</button><br/>
+
+	</div>
+</form>
+
+</center>
+	<script>
+		function resetForm() {
+			document.getElementById("repeditform").reset();
+		}
+	</script>
+
+<br/><br/>
+
+<HR WIDTH="60%" NOSHADE><br/><br/>
+
+<table align="center"> 
+	<td>
+		<a href="p1rep.html" class="custReturn">Return to the Sales Representative Page</a> 
+	</td>
+	<td>
+		<a href="p1.html" class="homeReturn">Return to Home Page</a> 
+	</td>
+</table>
+<br/><br/>
+
+CAPTURE;
+
+	return $form;
+} ?>
+
+
+<?php
+
+function renderAll(){
+
+$query = "SELECT * FROM REP";
+print '<font face="verdana">';
+?>
+<table align="center" cellspacing="8">
+<tr>
+<td align="center"><b>Representative Number</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>Last Name</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>First Name</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>Street</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>City</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>State</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>Zip Code</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>Commission</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>Rate</b></td>
+</tr>
+<?php
+if ($r = mysql_query($query))
+{
+
+		
+
+	while ($row = mysql_fetch_array($r))
+	{
+		echo "<tr>";
+			echo '<td><center>'.$row['REP_NUM'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td>'.$row['LAST_NAME'].'</td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['FIRST_NAME'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['STREET'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['CITY'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['STATE'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['ZIP'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['COMMISSION'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['RATE'].'</center></td>';
+		echo "</tr>";
+		}
+		print '</table></font>';
+}
+// output the resulting query table
+
+}
+?>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products - Edit a Sales Representative </title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+<body>
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a class="active" href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a href="p1part.html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <!-- <li style="float:right"><a href="#about">About</a></li> -->
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Edit a Sales Representative </font>
+
+<br/>
+
+<br/>
+
+<b><center><font face='verdana' size='4.5'> Current Modifiable Sales Representative Information </font></center></b>
+
+<HR WIDTH="60%" NOSHADE>
+
+<font face='verdana'>
+
+</font>
+
+
+<?php
+
+//get form data, making sure it's valid
+if(isset($_POST['check'])){
+$repNum=mysql_real_escape_string(htmlspecialchars($_POST['repNum']));
+$last=mysql_real_escape_string(htmlspecialchars($_POST['last']));
+$first=mysql_real_escape_string(htmlspecialchars($_POST['first']));
+$street=mysql_real_escape_string(htmlspecialchars($_POST['street']));
+$city=mysql_real_escape_string(htmlspecialchars($_POST['city']));
+$state=mysql_real_escape_string(htmlspecialchars($_POST['state']));
+$zip=mysql_real_escape_string(htmlspecialchars($_POST['zip']));
+$commission=mysql_real_escape_string(htmlspecialchars($_POST['commission']));
+$rate=mysql_real_escape_string(htmlspecialchars($_POST['rate']));
+//verifies fields have entries
+if($repNum=='')
+{
+//generate error message
+$error='ERROR: Please fill in the required field!';
+
+//if any field is blank, form is redisplayed. 
+renderAll();
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+ } 
+
+ ////////////////////////////////////////////////////////////////////////
+//Verifies that there is no user error and entries are correct format.// 
+////////////////////////////////////////////////////////////////////////
+
+// what if user doesnt exist? nothing is edited
+
+else if(mysql_query($repNum)){
+//generate error message
+$error='ERROR: The representative number you input is not in the list of representatives! <br/>
+ Please include a valid representative number.';
+//redisplay the form
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(is_numeric($last)){
+//generate error message
+$error='ERROR: The last name you entered was invalid. Please enter a valid last name without numbers!';
+//redisplay the form
+renderAll();
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if(is_numeric($first)){
+//generate error message
+$error='ERROR: The first name you entered was invalid. Please enter a valid first name without numbers!';
+//redisplay the form
+renderAll();
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if($city!='' && is_numeric($city)){
+//generate error message
+$error='ERROR: The city value you entered was invalid. Please enter a valid city name without numbers!';
+//redisplay the form
+renderAll();
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if($zip!='' && strlen($zip)!='5'){
+//generate error message
+$error='ERROR: The zip code you input is invalid! Please enter a 5-digit zip code number!';
+//redisplay the form
+renderAll();
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if($zip!='' && !is_numeric($zip)){
+//generate error message
+$error='ERROR: The zip code you input is invalid! Please enter a 5-digit zip code number!';
+//redisplay the form
+renderAll();
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if($state!='' && strlen($state)!='2' || is_numeric($state)){
+//generate error message
+$error='ERROR: The state letters you input is invalid! Please enter a 2 letter state abbreviation!';
+//redisplay the form
+renderAll();
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+else if($commission!='' && !is_numeric($comm)){
+//generate error message
+$error='ERROR: The commission you entered was invalid. Please enter a valid commission number!';
+//redisplay the form
+renderAll();
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+
+else if($rate!='' && !is_numeric($rate)){
+//generate error message
+$error='ERROR: The rate you entered was invalid. Please enter a valid rate number!';
+//redisplay the form
+renderAll();
+echo renderForm($repNum, $last, $first, $street, $city, $state, $zip, $commission, $rate, $error);
+}
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+ else {
+	//save data to the database
+
+ 	if(isset($last) && $last!='')
+ 	{
+ 		mysql_query("UPDATE REP SET LAST_NAME='$last' WHERE REP_NUM='$repNum'")
+ 		or die(mysql_error());
+ 	}
+
+ 	if(isset($first) && $first!='')
+ 	{
+ 		mysql_query("UPDATE REP SET FIRST_NAME='$first' WHERE REP_NUM='$repNum'")
+ 		or die(mysql_error());
+ 	}
+
+ 	if(isset($street) && $street!='')
+ 	{
+ 		mysql_query("UPDATE REP SET STREET='$street' WHERE REP_NUM='$repNum'")
+ 		or die(mysql_error());
+ 	}
+
+ 	if(isset($city) && $city!='')
+ 	{
+ 		mysql_query("UPDATE REP SET CITY='$city' WHERE REP_NUM='$repNum'")
+ 		or die(mysql_error());
+ 	}
+
+ 	if(isset($state) && $state!='')
+ 	{
+ 		mysql_query("UPDATE REP SET STATE='$state' WHERE REP_NUM='$repNum'")
+ 		or die(mysql_error());
+ 	}
+
+ 	if(isset($zip) && $zip!='')
+ 	{
+ 		mysql_query("UPDATE REP SET ZIP='$zip' WHERE REP_NUM='$repNum'")
+ 		or die(mysql_error());
+ 	}
+
+	if(isset($commission) && $commission!='')
+ 	{
+ 		mysql_query("UPDATE REP SET COMMISSION='$commission' WHERE REP_NUM='$repNum'")
+ 		or die(mysql_error());
+ 	} 	
+
+ 	if(isset($rate) && $rate!='')
+ 	{
+ 		mysql_query("UPDATE REP SET RATE='$rate' WHERE REP_NUM='$repNum'")
+ 		or die(mysql_error());
+ 	} 
+
+
+
+		renderAll();
+echo renderForm('', '', '', '', '', '', '', '', '', NULL);
+}
+}
+else{
+
+	//if the form hasn't been submitted, display the form
+	renderAll();
+echo renderForm('', '', '', '', '', '', '', '', '', NULL);
+}
+
+?>
+</body>
+</html>
