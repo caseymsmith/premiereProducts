@@ -1,0 +1,272 @@
+<?php
+//attempt to connect
+require_once('connectAlways.php');
+
+//allows user to create new entry in the customer database
+function renderForm($onum, $pnum, $numordered, $price, $error)
+{
+	//CAPTURE is a heredoc, which is created by doing <<<HEREDOCNAME
+	//to end it, just put HEREDOCNAME at the beginning of a line
+	if(isset($error) && $error !== NULL) {
+
+		$error = <<<ERROR
+		<div style="padding:4px; border:1px solid red; color:red;">$error</div>
+ERROR;
+	} 
+
+	else {
+		$error = '';
+	}
+	//<input type=hidden value="1" name="check" /> is dummie variable to check is there a submission/stuff in required fields
+$form = <<<CAPTURE
+$error
+<center>
+
+<form id="edit" method="post">
+	<div> 
+		<input type=hidden value="1" name="check" />
+		<font face="verdana">
+
+
+<HR WIDTH="60%" NOSHADE><br/><br/>
+
+		Please input the required criteria in addition to the modifications: <br/>
+		(* = REQUIRED)<br/><br/>
+
+		* Order Number:<input type="text" name="onum" value="$onum" required/><br/>
+		* Part Numer:<input type="text" name="pnum" value="$pnum" required/><br/>
+		Number Ordered:<input type="text" name="numordered" value="$numordered" /><br/>
+		Quoted Price:<input type="text" name="price" value="$price" /><br/><br/>
+		</font>
+	</br>
+
+	(modifications will appear in the chart once you click submit)
+	</br><br/></font>
+
+	<button type="button" onclick="resetForm()" id="clearentries" class="submitButton" style="border:none">Clear Entries</button>
+	<button type="submit" form="edit" class="submitButton" style="border:none">Submit</button><br/>
+
+	</div>
+</form>
+
+</center>
+	<script>
+		function resetForm() {
+			document.getElementById("edit").reset();
+		}
+	</script>
+
+<br/><br/>
+
+<HR WIDTH="60%" NOSHADE><br/><br/>
+
+<table align="center"> 
+	<td>
+		<a href="p1orderLine.html" class="custReturn">Return to the Order Line Page</a> 
+	</td>
+	<td>
+		<a href="p1.html" class="homeReturn">Return to Home Page</a> 
+	</td>
+</table>
+<br/><br/>
+
+CAPTURE;
+
+	return $form;
+} ?>
+
+
+<?php
+
+function renderAll(){
+
+$query = "SELECT * FROM ORDER_LINE";
+print '<font face="verdana">';
+?>
+<table align="center" cellspacing="8">
+<tr>
+<td align="center"><b>Order No.</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>Part No.</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>Number Ordered</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>Quoted Price</b></td>
+</tr>
+<?php
+if ($r = mysql_query($query))
+{
+	while ($row = mysql_fetch_array($r))
+	{
+		echo "<tr>";
+			echo '<td><center>'.$row['ORDER_NUM'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td>'.$row['PART_NUM'].'</td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['NUM_ORDERED'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['QUOTED_PRICE'].'</center></td>';
+		echo "</tr>";
+		}
+		print '</table></font>';
+}
+// output the resulting query table
+
+}
+?>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products - Edit an Order Line </title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+<body>
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a href="p1part.html">Part</a></li>
+  <li><a class="active" href="p1orderLine.html">Order Line</a></li>
+  <li style="float:right"><a href="#about">About</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Edit an Order Line </font>
+
+<br/>
+
+<br/>
+
+<b><center><font face='verdana' size='4.5'> Current Modifiable Order Lines </font></center></b>
+
+<HR WIDTH="60%" NOSHADE>
+
+<font face='verdana'>
+
+</font>
+
+
+<?php
+
+//get form data, making sure it's valid
+if(isset($_POST['check'])){
+$onum=mysql_real_escape_string(htmlspecialchars($_POST['onum']));
+$pnum=mysql_real_escape_string(htmlspecialchars($_POST['pnum']));
+$numordered=mysql_real_escape_string(htmlspecialchars($_POST['numordered']));
+$price=mysql_real_escape_string(htmlspecialchars($_POST['price']));
+
+
+//verifies fields have entries
+if($onum=='' || $pnum=='')
+{
+//generate error message
+$error='ERROR: Please fill in all required fields!';
+//if any field is blank, form is redisplayed. 
+renderAll();
+echo renderForm($onum, $pnum, $numordered, $price, $error);
+ } 
+
+ ////////////////////////////////////////////////////////////////////////
+//Verifies that there is no user error and entries are correct format.// 
+////////////////////////////////////////////////////////////////////////
+
+else if(!is_numeric($onum)){
+//generate error message
+$error='ERROR: The order number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+renderAll();
+echo renderForm($onum, $pnum, $numordered, $price, $error);
+}
+else if($onum < 0){
+//generate error message
+$error='ERROR: The order number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+renderAll();
+echo renderForm($onum, $pnum, $numordered, $price, $error);
+}
+else if(strlen($pnum)!= 4){
+//generate error message
+$error='ERROR: The part number you entered was invalid. Please enter a valid 4-digit number (this can include letters, ex. "CC01" would be acceptable)!';
+//redisplay the form
+renderAll();
+echo renderForm($onum, $pnum, $numordered, $price, $error);
+}
+else if($numordered!='' && $numordered<0){
+//generate error message
+$error='ERROR: The number ordered you entered was invalid. Please enter a valid number greater than 0!';
+//redisplay the form
+renderAll();
+echo renderForm($onum, $pnum, $numordered, $price, $error);
+}
+else if($numordered!='' && !is_numeric($numordered)){
+//generate error message
+$error='ERROR: The number ordered you entered was invalid. Please enter a valid number!';
+//redisplay the form
+renderAll();
+echo renderForm($onum, $pnum, $numordered, $price, $error);
+}
+else if($price!='' && !is_numeric($price)){
+//generate error message
+$error='ERROR: The quoted price you entered was invalid. Please enter a valid number!';
+//redisplay the form
+renderAll();
+echo renderForm($onum, $pnum, $numordered, $price, $error);
+}
+else if($price!='' && $price<0){
+//generate error message
+$error='ERROR: The quoted price you entered was invalid. Please enter a valid number greater than 0.00!';
+//redisplay the form
+renderAll();
+echo renderForm($onum, $pnum, $numordered, $price, $error);
+}
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+ else {
+	//save data to the database
+
+ 	if(isset($numordered) && $numordered!='')
+ 	{
+ 		mysql_query("UPDATE ORDER_LINE SET NUM_ORDERED='$numordered' WHERE ORDER_NUM='$onum' AND PART_NUM='$pnum'")
+ 		or die(mysql_error());
+ 	}
+
+ 	if(isset($price) && $price!='')
+ 	{
+ 		mysql_query("UPDATE ORDER_LINE SET QUOTED_PRICE='$price' WHERE ORDER_NUM='$onum' AND PART_NUM='$pnum'")
+ 		or die(mysql_error());
+ 	}
+
+
+
+		renderAll();
+echo renderForm('', '', '', '',  NULL);
+}
+}
+else{
+
+	//if the form hasn't been submitted, display the form
+	renderAll();
+echo renderForm('', '', '', '', NULL);
+}
+
+?>
+</body>
+</html>
