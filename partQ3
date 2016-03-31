@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products -  Query a Part - Many Parts On Hand Query</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+
+<body>
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a class="active" href="p1part.html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <li style="float:right"><a href="#about">About</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Many Parts On Hand Query</font>
+<br/><br/><br/>
+
+<center><font face='verdana'>Parts are considered to be well stocked when there are 20 or more on hand. 
+The following parts meet that condition. </font></center>
+<br/><br/>
+
+<?php
+
+//Attempt to connect
+require_once('connectAlways.php'); 
+
+$query = "SELECT * FROM PART WHERE ON_HAND >= '20'";
+
+// output the resulting query table
+print '<font face="verdana">';
+print'<table align="center" cellspacing="8">';
+print '<tr>'; 
+print '<td><b>Part No.</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Description</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>On Hand</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Class</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Warehouse</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Price</b></td>'; 
+print '</tr>'; 
+if ($r = mysql_query($query))
+{
+  while ($row = mysql_fetch_array($r))
+  {
+    echo "<tr>";
+      echo '<td><center>'.$row['PART_NUM'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td>'.$row['DESCRIPTION'].'</td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['ON_HAND'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['CLASS'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['WAREHOUSE'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['PRICE'].'</center></td>';
+    echo "</tr>";
+    }
+    print '</table></font>';
+}
+
+
+?>
+
+
+
+<br/>
+<br/>
+
+
+<center> 
+  <a href="p1part.html" class="custReturn">Return to the Part Page</a> 
+  <a href="qpart.php" class="custReturn">Return to the Query a Part Page</a> 
+  <a href="p1.html" class="homeReturn">Return to Home Page</a> 
+</center>
+
+
+
+
+
+</table>
+
+</body>
+</html>
