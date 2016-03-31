@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products - Order Line Page</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+
+<body>
+
+
+<div id="photos"> 
+  <img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a href="p1part.html">Part</a></li>
+  <li><a class="active" href="p1orderLine.html">Order Line</a></li>
+  <!-- <li style="float:right"><a href="#about">About</a></li> -->
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Order Line Page</font>
+
+<br/>
+
+ <center><IMG SRC="pictures/oline.jpg" ALT="homePic" WIDTH=500 HEIGHT=300></br>
+<br/> <br/>
+
+<table align="center">
+
+  <td> 
+       <a href="olconnect.php" class="custList">View All Order Lines</a>
+    </td>
+
+    <td>
+      <a href="oladd.php" class="newCust">Add a New Order Line</a>
+    </td>
+
+     <td>
+      <a href="oldelete.php" class="deleteCust">Delete an Order Line</a>
+    </td>
+
+    <td>
+     <a href="oledit.php" class="editCust">Edit an Order Line</a>
+   </td> 
+   
+    <td>
+      <a href="olquery.php" class="queryCust">Query an Order Line</a>
+    </td>
+
+</table>
+
+</body>
+</html>
+
