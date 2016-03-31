@@ -1,0 +1,189 @@
+<?php
+//attempt to connect
+require_once('connectAlways.php');
+
+//allows user to create new entry in the customer database
+function renderForm($cnum, $error)
+{
+  //CAPTURE is a heredoc, which is created by doing <<<HEREDOCNAME
+  //to end it, just put HEREDOCNAME at the beginning of a line
+  if(isset($error) && $error !== NULL) {
+
+    $error = <<<ERROR
+    <div style="padding:4px; border:1px solid red; color:red;">$error</div>
+ERROR;
+  } 
+
+  else {
+    $error = '';
+  }
+  //<input type=hidden value="1" name="check" /> is dummie variable to check is there a submission/stuff in required fields
+$form = <<<CAPTURE
+$error
+<br/><br/>
+<center><font face='verdana'>Orders can be viewed based on the customer number listed with them. 
+  <br/>Your input will dictate the orders shown. </font></center>
+<br/>
+<br/>
+
+<form id="oQ" method="post">
+  <div> 
+    <input type=hidden value="1" name="check" />
+    <font face="verdana">
+    Please input the customer number you would like the view the orders by:<input size="5" type="text" name="cnum" value="$cnum" required/> 
+    </font>
+  </br></br><br/>
+  <center>
+  <button type="button" onclick="resetForm()" id="clearentries" class="submitButton" style="border:none">Clear Entries</button>
+  <button type="submit" form="oQ" class="submitButton" style="border:none">Submit</button>
+  </center>
+  </div>
+  <br/><HR WIDTH="60%" NOSHADE>
+</form>
+  <script>
+    function resetForm() {
+      document.getElementById("oQ").reset();
+    }
+  </script>
+</center>
+<br/>
+
+CAPTURE;
+
+  return $form;
+} ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products - Query an Order - Orders By Customer Number Query</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+
+<body>
+
+
+<div id="photos"> 
+  <img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a class="active" href="p1order.html">Order</a></li>
+  <li><a href="p1part.html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <li style="float:right"><a href="#about">About</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Orders By Customer Number Query</font>
+
+<br/><br/><br/>
+
+<?php
+//get form data, making sure it's valid
+if(isset($_POST['check'])){
+  $cnum=mysql_real_escape_string(htmlspecialchars($_POST['cnum']));
+
+//verifies field has an entry
+if($cnum=='')
+{
+//generate error message
+$error='ERROR: Please enter a customer number!';
+//if any field is blank, form is redisplayed. 
+echo renderForm($cnum, $error);
+ } 
+else if(!is_numeric($cnum)){
+//generate error message
+$error='ERROR: The customer number you input is invalid! Please enter a valid number!';
+//redisplay the form
+echo renderForm($cnum, $error);
+}
+
+else{
+
+$query = "SELECT * FROM ORDERS WHERE CUSTOMER_NUM='$cnum'";
+if ($r = mysql_query($query))
+{
+  if(mysql_num_rows($r)>0){
+
+    print '<b><center><font face="verdana">Here are the orders from customer number '.$cnum.'</center></b><br/>';
+
+   
+// output the resulting query table
+print '<font face="verdana">';
+print'<table align="center" cellspacing="8">';
+print '<tr>'; 
+print '<td align="center"><b>Order Number</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Order Date</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Customer Number</b></td>'; 
+print '</tr>'; 
+if ($r = mysql_query($query))
+{
+  while ($row = mysql_fetch_array($r))
+  {
+    echo "<tr>";
+      echo '<td><center>'.$row['ORDER_NUM'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td>'.$row['ORDER_DATE'].'</td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['CUSTOMER_NUM'].'</center></td>';
+    echo "</tr>";
+    }
+    print '</table></font>';
+}
+
+   echo '<br/>';
+   echo '<br/>';
+   echo '<br/>';
+   echo '<br/>';
+   echo '<form name="again" action="oQ1.php" method="get">';
+   echo '<center><input type="submit" style="border:none;" class="custReturn" value="Click here to enter a different customer number"></center>';
+   echo '</form>';
+  }
+
+  else{
+  //generate error message
+  $error='ERROR: The customer number you entered does not appear in our records!';
+  //if any field is blank, form is redisplayed. 
+  echo renderForm($state, $error);
+  }
+}
+}
+}
+
+else{
+  //if the form hasn't been submitted, display the form
+echo renderForm('', NULL);
+}
+
+?>
+
+
+<br/>
+<table align="center"> 
+  <td>
+  <a href="p1order.html" class="custReturn">Return to the Order Page</a> 
+  </td>
+  <td>
+  <a href="qOrder.php" class="custReturn">Return to the Query a Order Page</a> 
+  </td>
+  <td>
+  <a href="p1.html" class="homeReturn">Return to Home Page</a> 
+  </td>
+
+  </table>
+
+
+</body>
+</html>
