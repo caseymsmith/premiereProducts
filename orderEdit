@@ -1,0 +1,255 @@
+<?php
+//attempt to connect
+require_once('connectAlways.php');
+
+//allows user to create new entry in the customer database
+function renderForm($onum, $date, $cnum, $error)
+{
+	//CAPTURE is a heredoc, which is created by doing <<<HEREDOCNAME
+	//to end it, just put HEREDOCNAME at the beginning of a line
+	if(isset($error) && $error !== NULL) {
+
+		$error = <<<ERROR
+		<div style="padding:4px; border:1px solid red; color:red;">$error</div>
+ERROR;
+	} 
+
+	else {
+		$error = '';
+	}
+	//<input type=hidden value="1" name="check" /> is dummie variable to check is there a submission/stuff in required fields
+$form = <<<CAPTURE
+$error
+<center>
+
+<form id="editform" method="post">
+	<div> 
+		<input type=hidden value="1" name="check" />
+		<font face="verdana">
+
+
+<HR WIDTH="60%" NOSHADE><br/><br/>
+
+		Please input the required criteria in addition to the modifications: <br/>
+		(* = REQUIRED)<br/><br/>
+
+		* Order Number:<input type="text" name="onum" value="$onnum" required/><br/>
+		Order Date:<input type="text" name="date" value="$date" required/><br/>
+		Customer Number:<input type="text" name="cnum" value="$cnum" required/><br/><br/>
+		(enter the date in the format of year, month, day with dashes:<br/>
+		 March 28th, 2015 would be 2015-03-28)<br/>
+	</br>
+
+	(modifications will appear in the chart once you click submit)
+	</br><br/></font>
+
+	<button type="button" onclick="resetForm()" id="clearentries" class="submitButton" style="border:none">Clear Entries</button>
+	<button type="submit" form="editform" class="submitButton" style="border:none">Submit</button><br/>
+
+	</div>
+</form>
+
+</center>
+	<script>
+		function resetForm() {
+			document.getElementById("editform").reset();
+		}
+	</script>
+
+<br/><br/>
+
+<HR WIDTH="60%" NOSHADE><br/><br/>
+
+<table align="center"> 
+	<td>
+		<a href="p1order.html" class="custReturn">Return to the Orders Page</a> 
+	</td>
+	<td>
+		<a href="p1.html" class="homeReturn">Return to Home Page</a> 
+	</td>
+</table>
+<br/><br/>
+
+CAPTURE;
+
+	return $form;
+} ?>
+
+
+<?php
+
+function renderAll(){
+
+$query = "SELECT * FROM ORDERS";
+print '<font face="verdana">';
+?>
+<table align="center" cellspacing="8">
+<tr>
+<td align="center"><b>Order Number</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>Order Date</b></td>
+<td>&nbsp;</td>
+<td align="center"><b>Customer Number</b></td>
+</tr>
+<?php
+if ($r = mysql_query($query))
+{
+
+		
+
+	while ($row = mysql_fetch_array($r))
+	{
+		echo "<tr>";
+			echo '<td><center>'.$row['ORDER_NUM'].'</center></td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td>'.$row['ORDER_DATE'].'</td>';
+			echo '<td>&nbsp;</td>';
+			echo '<td><center>'.$row['CUSTOMER_NUM'].'</center></td>';
+		echo "</tr>";
+		}
+		print '</table></font>';
+}
+// output the resulting query table
+
+}
+?>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products - Edit an Order </title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+<body>
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a class="active" href="p1order.html">Order</a></li>
+  <li><a href="p1part.html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <li style="float:right"><a href="#about">About</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Edit an Order </font>
+
+<br/>
+
+<br/>
+
+<b><center><font face='verdana' size='4.5'> Current Modifiable Orders </font></center></b>
+
+<HR WIDTH="60%" NOSHADE>
+
+<font face='verdana'>
+
+</font>
+
+
+<?php
+
+//get form data, making sure it's valid
+if(isset($_POST['check'])){
+$onum=mysql_real_escape_string(htmlspecialchars($_POST['onum']));
+$date=mysql_real_escape_string(htmlspecialchars($_POST['date']));
+$cnum=mysql_real_escape_string(htmlspecialchars($_POST['cnum']));
+
+//verifies fields have entries
+if($onum=='')
+{
+//generate error message
+$error='ERROR: Please fill in all required fields!';
+//if any field is blank, form is redisplayed. 
+renderAll();
+echo renderForm($onum, $date, $cnum);
+ } 
+
+ ////////////////////////////////////////////////////////////////////////
+//Verifies that there is no user error and entries are correct format.// 
+////////////////////////////////////////////////////////////////////////
+
+// what if user doesnt exist? nothing is edited
+else if(!is_numeric($onum)){
+//generate error message
+$error='ERROR: The order number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+renderAll();
+echo renderForm($onum, $date, $cnum, $error);
+}
+else if($onum < 0){
+//generate error message
+$error='ERROR: The order number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+renderAll();
+echo renderForm($onum, $date, $cnum, $error);
+}
+// else if(!is_numeric($date)){
+// //generate error message
+// $error='ERROR: The date you entered was invalid. Please check the format and enter a valid date!';
+// //redisplay the form
+// echo renderForm($onum, $date, $cnum, $error);
+// }
+else if($cnum!='' && !is_numeric($cnum)){
+//generate error message
+$error='ERROR: The customer number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+renderAll();
+echo renderForm($onum, $date, $cnum, $error);
+}
+else if($cnum!='' && $cnum<0){
+//generate error message
+$error='ERROR: The customer number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+renderAll();
+echo renderForm($onum, $date, $cnum, $error);
+}
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+ else {
+	//save data to the database
+
+ 	if(isset($cnum) && $cnum!='')
+ 	{
+ 		mysql_query("UPDATE ORDERS SET CUSTOMER_NUM='$cnum' WHERE ORDER_NUM='$ORDER_NUM'")
+ 		or die(mysql_error());
+ 	}
+
+ 	if(isset($date) && $date!='')
+ 	{
+ 		mysql_query("UPDATE ORDERS SET ORDER_DATE='$date' WHERE ORDER_NUM='$ORDER_NUM'")
+ 		or die(mysql_error());
+ 	}
+
+
+
+		renderAll();
+echo renderForm('', '', '',  NULL);
+}
+}
+else{
+
+	//if the form hasn't been submitted, display the form
+	renderAll();
+echo renderForm('', '', '',  NULL);
+}
+
+?>
+</body>
+</html>
