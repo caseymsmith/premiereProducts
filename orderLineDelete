@@ -1,0 +1,149 @@
+<?php
+//attempt to connect
+require_once('connectAlways.php');
+
+//allows user to create new entry in the customer database
+function renderForm($onum, $pnum, $error)
+{
+
+//CAPTURE is a heredoc, which is created by doing <<<HEREDOCNAME
+	//to end it, just put HEREDOCNAME at the beginning of a line
+	if(isset($error) && $error !== NULL) {
+
+		$error = <<<ERROR
+		<div style="padding:4px; border:1px solid red; color:red;">$error</div>
+ERROR;
+	} else {
+		$error = '';
+	}
+	//<input type=hidden value="1" name="check" /> is dummie variable to check is there a submission/stuff in required fields
+$form = <<<CAPTURE
+$error
+<br/>
+
+		<div style="float:right;"><IMG SRC="pictures/0.png" ALT="deleteOrderPic" WIDTH=250 HEIGHT=250></div>
+
+<form id="oldeleteform" method="post">
+	<div> 
+		<input type=hidden value="1" name="check" />
+		<font face="verdana">
+		Please input the order number of the order line you would like to delete: 
+		<input type="text" name="onum" value="$onum" required/><br/>
+		Please input the part number of the order line you would like to delete: 
+		</font><input type="text" name="pnum" value="$pnum" required/>
+		<br/></br></br>
+	<button type="button" onclick="resetForm()" id="clearentries" class="submitButton" style="border:none">Clear Entries</button>
+	<button type="submit" form="oldeleteform" class="submitButton" style="border:none">Submit</button>
+	</div>
+</form>
+
+	<script>
+		function resetForm() {
+			document.getElementById("oldeleteform").reset();
+		}
+	</script>
+
+<br/><br/>
+
+<table align="center"> 
+	<td>
+		<a href="p1orderLine.html" class="custReturn">Return to the Order Line Page</a> 
+	</td>
+	<td>
+		<a href="p1.html" class="homeReturn">Return to Home Page</a> 
+	</td>
+	</table>
+CAPTURE;
+
+	return $form;
+} 
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products - Delete an Order Line</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+<body>
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a href="p1part.html">Part</a></li>
+  <li><a class="active" href="p1orderLine.html">Order Line</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Delete an Order Line </font>
+
+<br/><br/>
+
+<?php
+
+ // get form data, making sure it's valid
+ if(isset($_POST['check'])){
+ $onum=mysql_real_escape_string(htmlspecialchars($_POST['onum']));
+ $pnum=mysql_real_escape_string(htmlspecialchars($_POST['pnum']));
+ 
+if($onum=='' || $pnum=='')
+{
+//generate error message
+$error='ERROR: Please fill in the required fields!';
+//if any field is blank, form is redisplayed. 
+echo renderForm($onum, $pnum, $error);
+ } 
+else if(!is_numeric($onum)){
+//generate error message
+$error='ERROR: The order number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+echo renderForm($onum, $pnum, $error);
+}
+else if($onum < 0){
+//generate error message
+$error='ERROR: The order number you entered was invalid. Please enter a valid number!';
+//redisplay the form
+echo renderForm($onum, $pnum, $error);
+}
+else if(strlen($pnum)!= 4){
+//generate error message
+$error='ERROR: The part number you entered was invalid. Please enter a valid 4-digit number (this can include letters, ex. "CC01" would be acceptable)!';
+//redisplay the form
+echo renderForm($onum, $pnum, $error);
+}
+
+else{
+	if(isset($onum) && $onum!='' && isset($pnum) && $pnum!=''){
+		mysql_query("DELETE FROM ORDER_LINE WHERE ORDER_NUM='$onum' AND PART_NUM='$pnum'")
+ 		or die(mysql_error());
+ 		
+ 		print '<br/>The order line was removed from the list of order lines.</br><br/><br/>';
+ 		echo '<form name="again" action="p1orderLine.html" method="get">';
+   		echo '<center><input type="submit" style="border:none;" class="custReturn" value="Click here to return to the order line page"></center>';
+  		echo '</form>';
+	}
+}
+}
+
+else{
+echo renderForm('', '', NULL);
+}
+
+?>
+</body>
+</html>
+
+
