@@ -1,0 +1,116 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products -  Query a Sales Representative - Representatives by Commission Query</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+
+<body>
+
+
+<div id="photos"> 
+  <img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a class="active" href="p1rep.html">Sales Representative</a></li>
+  <li><a href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a href="p1part.html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <li style="float:right"><a href="#about">About</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'> Representatives by Commission Query</font>
+<br/><br/><br/>
+
+<center><font face='verdana'>Sales representatives have a goal to make at least $25,000 in commission to be considered for a raise. <br/>
+The following representatives meet that condition. </font></center>
+<br/><br/>
+
+<?php
+
+//Attempt to connect
+require_once('connectAlways.php'); 
+
+$query = "SELECT * FROM REP WHERE Commission > '25000'";
+
+// output the resulting query table
+print'<table align="center" cellspacing="8">';
+print '<tr>'; 
+print '<td><b>Representative No.</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Last Name</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>First Name</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Street</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>City</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>State</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Zip Code</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Commission</b></td>';
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Rate</b></td>';
+print '</tr>'; 
+if ($r = mysql_query($query))
+{
+  while ($row = mysql_fetch_array($r))
+  {
+    echo "<tr>";
+      echo '<td><center>'.$row['REP_NUM'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td>'.$row['LAST_NAME'].'</td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['FIRST_NAME'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['STREET'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['CITY'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['STATE'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['ZIP'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['COMMISSION'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['RATE'].'</center></td>';
+    echo "</tr>";
+    }
+    print '</table>';
+}
+
+?>
+
+
+
+<br/>
+<br/>
+
+
+<center> 
+  <a href="p1rep.html" class="custReturn">Return to the Sales Representative Page</a> 
+  <a href="p1queryRep.php" class="custReturn">Return to the Query a Sales Representative Page</a> 
+  <a href="p1.html" class="homeReturn">Return to Home Page</a> 
+</center>
+
+
+
+
+
+</table>
+
+</body>
+</html>
