@@ -1,0 +1,214 @@
+<?php
+//attempt to connect
+require_once('connectAlways.php');
+
+//allows user to create new entry in the customer database
+function renderForm($state, $error)
+{
+  //CAPTURE is a heredoc, which is created by doing <<<HEREDOCNAME
+  //to end it, just put HEREDOCNAME at the beginning of a line
+  if(isset($error) && $error !== NULL) {
+
+    $error = <<<ERROR
+    <div style="padding:4px; border:1px solid red; color:red;">$error</div>
+ERROR;
+  } 
+
+  else {
+    $error = '';
+  }
+  //<input type=hidden value="1" name="check" /> is dummie variable to check is there a submission/stuff in required fields
+$form = <<<CAPTURE
+$error
+
+<center><IMG SRC="pictures/map.jpg" ALT="mapPic" WIDTH=600 HEIGHT=400>
+<br/><br/>
+<center><font face='verdana'>Customers can be viewed based on the state they are listed as. 
+  Your input will dictate the customers shown. </font></center>
+<br/>
+<br/>
+
+<form id="stateCustQuery" method="post">
+  <div> 
+    <input type=hidden value="1" name="check" />
+    <font face="verdana">
+    Please input the two letter state abbreviation you would like the view the customers by:<input size="5" type="text" name="state" required/> 
+    </font>
+  </br></br><br/>
+  <button type="button" onclick="resetForm()" id="clearentries" class="submitButton" style="border:none">Clear Entries</button>
+  <button type="submit" form="stateCustQuery" class="submitButton" style="border:none">Submit</button>
+  </div>
+  <br/><HR WIDTH="60%" NOSHADE>
+</form>
+  <script>
+    function resetForm() {
+      document.getElementById("stateCustQuery").reset();
+    }
+  </script>
+</center>
+<br/>
+
+CAPTURE;
+
+  return $form;
+} ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>Premiere Products -  Query a Customer - Customers By State Query</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="proj.css">
+</head>
+
+
+<body>
+
+
+<div id="photos"> 
+	<img src="pictures/header.jpg" class="displayphoto" alt="headerphoto"/>
+</div>
+
+
+<ul>
+  <li><a href="p1">Premiere Products - Home</a></li>
+  <li><a href="p1rep.html">Sales Representative</a></li>
+  <li><a class="active" href="p1customer.html">Customer</a></li>
+  <li><a href="p1order.html">Order</a></li>
+  <li><a href="p1part.html">Part</a></li>
+  <li><a href="p1orderLine.html">Order Line</a></li>
+  <li style="float:right"><a href="#about">About</a></li>
+</ul>
+
+<br/>
+
+<font face='verdana' size='16'>  Customers By State Query</font>
+
+<br/><br/><br/>
+
+<?php
+//get form data, making sure it's valid
+if(isset($_POST['check'])){
+  $state=mysql_real_escape_string(htmlspecialchars($_POST['state']));
+
+//verifies field has an entry
+if($state=='' )
+{
+//generate error message
+$error='ERROR: Please enter a state abbreviation!';
+//if any field is blank, form is redisplayed. 
+echo renderForm($state, $error);
+ } 
+
+else if(strlen($state)>'2'){
+//generate error message
+$error='ERROR: The state letters you input is invalid! Please enter a 2 letter state abbreviation!';
+//redisplay the form
+echo renderForm($state, $error);
+}
+else if(is_numeric($state)){
+//generate error message
+$error='ERROR: The state letters you input is invalid! Please enter a 2 letter state abbreviation!';
+//redisplay the form
+echo renderForm($state, $error);
+}
+
+else{
+
+$query = "SELECT * FROM CUSTOMER WHERE STATE='$state'";
+if ($r = mysql_query($query))
+{
+  if(mysql_num_rows($r)>0){
+
+    print '<b><center><font face="verdana">Here are the customers for the state of '.$state.'</center></b><br/>';
+
+    // output the resulting query table
+print'<table align="center" cellspacing="8">';
+print '<tr>'; 
+print '<td><b>Customer No.</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Customer Name</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Street</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>City</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>State</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Zip Code</b></td>'; 
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Balance</b></td>';
+echo '<td>&nbsp;</td>';
+print '<td align="center"><b>Rep No.</b></td>';
+print '<td align="center"><b>Credit Limit</b></td>';
+print '</tr>'; 
+
+  while ($row = mysql_fetch_array($r))
+  {
+    echo "<tr>";
+      echo '<td><center>'.$row['CUSTOMER_NUM'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td>'.$row['CUSTOMER_NAME'].'</td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['STREET'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['CITY'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['STATE'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['ZIP'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['BALANCE'].'</center></td>';
+      echo '<td>&nbsp;</td>';
+      echo '<td><center>'.$row['REP_NUM'].'</center></td>';
+      echo '<td align="right">'.$row['CREDIT_LIMIT'].'</td>';
+    echo "</tr>";
+    }
+    print '</table></font>';
+
+   echo '<br/>';
+   echo '<br/>';
+   echo '<br/>';
+   echo '<br/>';
+   echo '<form name="again" action="custQ2.php" method="get">';
+   echo '<center><input type="submit" style="border:none;" class="custReturn" value="Click here to enter a different state"></center>';
+   echo '</form>';
+  }
+
+  else{
+  //generate error message
+  $error='ERROR: The state abbreviation you entered does not appear in our records!';
+  //if any field is blank, form is redisplayed. 
+  echo renderForm($state, $error);
+  }
+}
+}
+}
+
+else{
+  //if the form hasn't been submitted, display the form
+echo renderForm('', NULL);
+}
+
+?>
+
+
+<br/>
+<table align="center"> 
+  <td>
+  <a href="p1customer.html" class="custReturn">Return to the Customer Page</a> 
+  </td>
+  <td>
+  <a href="p1queryCust.php" class="custReturn">Return to the Query a Customer Page</a> 
+  </td>
+  <td>
+  <a href="p1.html" class="homeReturn">Return to Home Page</a> 
+  </td>
+
+  </table>
+
+
+</body>
+</html>
